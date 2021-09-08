@@ -78,16 +78,42 @@ impl Ray {
     // a' = b⋅b
     // b' = 2*b⋅(A−C)
     // c' = (A−C)⋅(A−C)−r^2
+    //
+    // simplification
+    // b' = 2*h
+    // gives
+    // (-h +/- (h^2 - ac) ^ (1/2)) / a
+    // where h = b⋅(A−C)
+    // giving discriminant
+    // (h^2 - ac)
     pub fn hit_sphere(&self, center: Vec3, radius: f64) -> f64 {
         let oc = self.origin.sub(&center);
-        let a = self.direction.dot(&self.direction); // a' above
-        let b = 2.0 * self.direction.dot(&oc); // b' above
-        let c = oc.dot(&oc) - radius * radius;
-        let discriminant = b * b - 4.0 * a * c;
+
+        // vector dotted with itself is equal to squared length of the vector
+        //
+        // let a = self.direction.dot(&self.direction); // a' above
+        let a = self.direction.length_squared(); // a' above
+
+        // using b' = 2*h simplification
+        //
+        // let b = 2.0 * self.direction.dot(&oc); // b' above
+        let h = self.direction.dot(&oc); // h above
+
+        // vector dotted with itself is equal to squared length of the vector
+        //
+        // let c = oc.dot(&oc) - radius * radius;
+        let c = oc.length_squared() - radius * radius;
+
+        // let discriminant = b * b - 4.0 * a * c;
+        let discriminant = h * h - a * c;
 
         if discriminant < 0.0 {
             return -1.0;
         }
-        return (-b - discriminant.sqrt()) / (2.0 * a);
+
+        // using b' = 2*h simplification
+        //
+        // return (-b - discriminant.sqrt()) / (2.0 * a);
+        return (-h - discriminant.sqrt()) / a;
     }
 }
