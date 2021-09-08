@@ -1,6 +1,6 @@
 extern crate raylib;
 
-use raylib::{vec::Vec3, File, Ray};
+use raylib::{file::File, ray::Ray, vec::Vec3};
 
 fn main() {
     // image
@@ -24,9 +24,7 @@ fn main() {
         .sub(&Vec3::new(0.0, 0.0, focal_length));
 
     // render
-    let output = File::new("example.ppm");
-    output.write(format!("P3\n{} {}\n255\n", width, height));
-
+    let output = File::new("example.ppm", height, width);
     for h in (0..height).rev() {
         println!("Scan height: {}", height - h);
         for w in 0..width {
@@ -46,7 +44,7 @@ fn main() {
             color.x *= 255.999;
             color.y *= 255.999;
             color.z *= 255.999;
-            output.write(format!("{}\n", color));
+            output.write(color);
         }
     }
     println!("DONE")
