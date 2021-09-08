@@ -50,6 +50,7 @@ impl Ray {
         let color1 = Vec3::new(1.0, 1.0, 1.0);
         let color2 = Vec3::new(0.5, 0.7, 1.0);
 
+        // linear interpolation (lerp)
         // blendedValue = (1−t) ⋅ startValue + t ⋅ endValue
         color1.mul(1.0 - t).add(&color2.mul(t))
     }
