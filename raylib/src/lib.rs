@@ -47,12 +47,12 @@ impl Ray {
         let t = 0.5 * dir.y + 1.0;
 
         // linear interpolation between white (1.0, 1.0, 1.0) and blue(0.5, 0.7, 1.0)
-        let color1 = Vec3::new(1.0, 1.0, 1.0);
-        let color2 = Vec3::new(0.5, 0.7, 1.0);
+        let white = Vec3::new(1.0, 1.0, 1.0);
+        let blue = Vec3::new(0.5, 0.7, 1.0);
 
         // linear interpolation (lerp)
         // blendedValue = (1−t) ⋅ startValue + t ⋅ endValue
-        color1.mul(1.0 - t).add(&color2.mul(t))
+        white.mul(1.0 - t).add(&blue.mul(t))
     }
 
     // hit_sphere calculates whether or not a ray from the camera origin
@@ -78,13 +78,16 @@ impl Ray {
     // a' = b⋅b
     // b' = 2*b⋅(A−C)
     // c' = (A−C)⋅(A−C)−r^2
-    pub fn hit_sphere(&self, center: Vec3, radius: f64) -> bool {
+    pub fn hit_sphere(&self, center: Vec3, radius: f64) -> f64 {
         let oc = self.origin.sub(&center);
         let a = self.direction.dot(&self.direction); // a' above
         let b = 2.0 * self.direction.dot(&oc); // b' above
         let c = oc.dot(&oc) - radius * radius;
         let discriminant = b * b - 4.0 * a * c;
 
-        discriminant > 0.0
+        if discriminant < 0.0 {
+            return -1.0;
+        }
+        return (-b - discriminant.sqrt()) / (2.0 * a);
     }
 }
