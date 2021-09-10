@@ -21,17 +21,22 @@ impl Ray {
         self.origin.add(&self.direction.mul(t))
     }
 
-    pub fn diffused_world_color(&self, world: &Hittables<Sphere>, max_depth: i32) -> Vec3 {
+    pub fn diffused_world_color(
+        &self,
+        world: &Hittables<Sphere>,
+        max_depth: i32,
+        world_hit_t_min: f64,
+    ) -> Vec3 {
         if max_depth <= 0 {
             return Vec3::new(0.0, 0.0, 0.0);
         }
-        // 0.001 to prevent shadow acne
-        match world.hit(self, 0.001, f64::INFINITY) {
+        match world.hit(self, world_hit_t_min, f64::INFINITY) {
             Some(point) => {
                 let target = point.at.add(&point.normal).add(&random_in_unit_sphere());
                 let ray = Ray::new(point.at, target.sub(&point.at));
 
-                ray.diffused_world_color(&world, max_depth - 1).mul(0.5)
+                ray.diffused_world_color(&world, max_depth - 1, world_hit_t_min)
+                    .mul(0.5)
             }
             None => self.color(),
         }
