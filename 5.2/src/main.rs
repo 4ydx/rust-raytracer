@@ -40,15 +40,12 @@ fn main() {
                 origin: origin,
                 direction: direction,
             };
-            let mut color: Vec3;
+            let color: Vec3;
             if ray.hit_sphere(Vec3::new(0.0, 0.0, -1.0), 0.5) > 0.0 {
-                color = Vec3::new(1.0, 0.0, 0.0);
+                color = Vec3::new(1.0, 0.0, 0.0).mul(255.999);
             } else {
                 color = ray.color();
             }
-            color.x *= 255.999;
-            color.y *= 255.999;
-            color.z *= 255.999;
             output.write(color);
         }
     }

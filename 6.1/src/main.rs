@@ -41,17 +41,16 @@ fn main() {
                 direction: direction,
             };
 
-            let mut color: Vec3;
+            let color: Vec3;
             let t = ray.hit_sphere(Vec3::new(0.0, 0.0, -1.0), 0.5);
             if t > 0.0 {
-                let normal = ray.at(t).sub(&Vec3::new(0.0, 0.0, -1.0));
-                color = Vec3::new(normal.x + 1.0, normal.y + 1.0, normal.z + 1.0).mul(0.5);
+                let normal = ray.at(t).sub(&Vec3::new(0.0, 0.0, -1.0)).unit();
+                color = Vec3::new(normal.x + 1.0, normal.y + 1.0, normal.z + 1.0)
+                    .mul(0.5)
+                    .mul(255.999);
             } else {
                 color = ray.color();
             }
-            color.x *= 255.999;
-            color.y *= 255.999;
-            color.z *= 255.999;
             output.write(color);
         }
     }

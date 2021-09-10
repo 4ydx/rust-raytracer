@@ -1,3 +1,6 @@
+use crate::hittable::Hittables;
+use crate::random_in_unit_sphere;
+use crate::sphere::Sphere;
 use crate::vec::Vec3;
 
 #[derive(Debug)]
@@ -7,21 +10,52 @@ pub struct Ray {
 }
 
 impl Ray {
+    pub fn new(origin: Vec3, direction: Vec3) -> Ray {
+        Ray {
+            origin: origin,
+            direction: direction,
+        }
+    }
+
     pub fn at(&self, t: f64) -> Vec3 {
         self.origin.add(&self.direction.mul(t))
     }
 
+    pub fn diffused_world_color(&self, world: &Hittables<Sphere>, max_depth: i32) -> Vec3 {
+        if max_depth <= 0 {
+            return Vec3::new(0.0, 0.0, 0.0);
+        }
+        let (hit, point) = world.hit(self, 0.0, f64::INFINITY);
+        if hit {
+            let target = point.at.add(&point.normal).add(&random_in_unit_sphere());
+            let ray = Ray::new(point.at, target.sub(&point.at));
+
+            return ray.diffused_world_color(&world, max_depth - 1).mul(0.5);
+        }
+        return self.color();
+    }
+
+    pub fn world_color(&self, world: &Hittables<Sphere>) -> Vec3 {
+        let (hit, point) = world.hit(self, 0.0, f64::INFINITY);
+        if hit {
+            return point
+                .normal
+                .add(&Vec3::new(1.0, 1.0, 1.0))
+                .mul(0.5)
+                .mul(255.999);
+        }
+        return self.color();
+    }
+
     pub fn color(&self) -> Vec3 {
         let dir = self.direction.unit();
-        let t = 0.5 * dir.y + 1.0;
-
-        // linear interpolation between white (1.0, 1.0, 1.0) and blue(0.5, 0.7, 1.0)
+        let t = 0.5 * (dir.y + 1.0);
         let white = Vec3::new(1.0, 1.0, 1.0);
         let blue = Vec3::new(0.5, 0.7, 1.0);
 
         // linear interpolation (lerp)
         // blendedValue = (1−t) ⋅ startValue + t ⋅ endValue
-        white.mul(1.0 - t).add(&blue.mul(t))
+        white.mul(1.0 - t).add(&blue.mul(t)).mul(255.999)
     }
 
     // hit_sphere calculates whether or not a ray from the camera origin

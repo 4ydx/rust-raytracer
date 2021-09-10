@@ -1,3 +1,5 @@
+use crate::random_between;
+
 #[derive(Copy, Clone, Debug, Default)]
 pub struct Vec3 {
     pub x: f64,
@@ -8,6 +10,14 @@ pub struct Vec3 {
 impl Vec3 {
     pub fn new(x: f64, y: f64, z: f64) -> Vec3 {
         Vec3 { x: x, y: y, z: z }
+    }
+
+    pub fn random(min: f64, max: f64) -> Vec3 {
+        Vec3::new(
+            random_between(min, max),
+            random_between(min, max),
+            random_between(min, max),
+        )
     }
 
     pub fn add(&self, v: &Vec3) -> Vec3 {

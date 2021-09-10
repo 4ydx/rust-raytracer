@@ -40,11 +40,7 @@ fn main() {
                 origin: origin,
                 direction: direction,
             };
-            let mut color = ray.color();
-            color.x *= 255.999;
-            color.y *= 255.999;
-            color.z *= 255.999;
-            output.write(color);
+            output.write(ray.color());
         }
     }
     println!("DONE")
