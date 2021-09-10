@@ -25,22 +25,22 @@ impl Ray {
         if max_depth <= 0 {
             return Vec3::new(0.0, 0.0, 0.0);
         }
-        let (hit, point) = world.hit(self, 0.0, f64::INFINITY);
-        if hit {
-            let target = point.at.add(&point.normal).add(&random_in_unit_sphere());
-            let ray = Ray::new(point.at, target.sub(&point.at));
+        match world.hit(self, 0.0, f64::INFINITY) {
+            Some(point) => {
+                let target = point.at.add(&point.normal).add(&random_in_unit_sphere());
+                let ray = Ray::new(point.at, target.sub(&point.at));
 
-            return ray.diffused_world_color(&world, max_depth - 1).mul(0.5);
+                ray.diffused_world_color(&world, max_depth - 1).mul(0.5)
+            }
+            None => self.color(),
         }
-        return self.color();
     }
 
     pub fn world_color(&self, world: &Hittables<Sphere>) -> Vec3 {
-        let (hit, point) = world.hit(self, 0.0, f64::INFINITY);
-        if hit {
-            return point.normal.add(&Vec3::new(1.0, 1.0, 1.0)).mul(0.5);
+        match world.hit(self, 0.0, f64::INFINITY) {
+            Some(point) => point.normal.add(&Vec3::new(1.0, 1.0, 1.0)).mul(0.5),
+            None => self.color(),
         }
-        return self.color();
     }
 
     pub fn color(&self) -> Vec3 {

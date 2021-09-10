@@ -30,7 +30,7 @@ impl<T> Hittables<T>
 where
     T: Hittable,
 {
-    pub fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> (bool, Hit) {
+    pub fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<Hit> {
         let mut hit_anything = false;
         let mut closest = t_max;
         let mut current_at = Hit::default();
@@ -43,6 +43,9 @@ where
                 current_at = at;
             }
         }
-        return (hit_anything, current_at);
+        if hit_anything {
+            return Some(current_at);
+        }
+        None
     }
 }

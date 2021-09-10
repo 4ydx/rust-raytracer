@@ -50,9 +50,7 @@ pub fn write_color(
     let scale = 1.0 / samples_per_pixel as f64;
     let mut adjusted_color = color.mul(scale);
     if gamma_correct {
-        adjusted_color.x = adjusted_color.x.sqrt();
-        adjusted_color.y = adjusted_color.y.sqrt();
-        adjusted_color.z = adjusted_color.z.sqrt();
+        adjusted_color = adjusted_color.sqrt();
     }
     adjusted_color.x = 256.0 * clamp(adjusted_color.x, 0.0, 0.999);
     adjusted_color.y = 256.0 * clamp(adjusted_color.y, 0.0, 0.999);

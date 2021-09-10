@@ -36,6 +36,10 @@ impl Vec3 {
         Vec3::new(self.x / divisor, self.y / divisor, self.z / divisor)
     }
 
+    pub fn sqrt(&self) -> Vec3 {
+        Vec3::new(self.x.sqrt(), self.y.sqrt(), self.z.sqrt())
+    }
+
     pub fn length(&self) -> f64 {
         self.length_squared().sqrt()
     }
