@@ -34,7 +34,7 @@ fn main() {
                 let ray = camera.ray(u, v);
                 pixel_color = pixel_color.add(&ray.world_color(&world));
             }
-            write_color(&output, pixel_color, samples_per_pixel);
+            write_color(&output, pixel_color, samples_per_pixel, false);
         }
     }
     println!("DONE")

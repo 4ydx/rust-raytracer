@@ -1,6 +1,8 @@
 extern crate raylib;
 
-use raylib::{camera::Camera, file::File, hittable::Hittables, sphere::Sphere, vec::Vec3};
+use raylib::{
+    camera::Camera, file::File, hittable::Hittables, sphere::Sphere, vec::Vec3, write_color,
+};
 
 fn main() {
     // image
@@ -27,7 +29,7 @@ fn main() {
             let u: f64 = w as f64 / (width as f64 - 1.0);
             let v: f64 = h as f64 / (height as f64 - 1.0);
             let ray = camera.ray(u, v);
-            output.write(ray.world_color(&world));
+            write_color(&output, ray.world_color(&world), 0, false);
         }
     }
     println!("DONE")

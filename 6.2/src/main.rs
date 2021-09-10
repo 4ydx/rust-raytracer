@@ -1,6 +1,6 @@
 extern crate raylib;
 
-use raylib::{file::File, ray::Ray, vec::Vec3};
+use raylib::{file::File, ray::Ray, vec::Vec3, write_color};
 
 fn main() {
     // image
@@ -45,11 +45,11 @@ fn main() {
             let t = ray.hit_sphere(Vec3::new(0.0, 0.0, -1.0), 0.5);
             if t > 0.0 {
                 let normal = ray.at(t).sub(&Vec3::new(0.0, 0.0, -1.0)).unit();
-                color = normal.add(&Vec3::new(1.0, 1.0, 1.0)).mul(0.5).mul(255.999);
+                color = normal.add(&Vec3::new(1.0, 1.0, 1.0)).mul(0.5);
             } else {
                 color = ray.color();
             }
-            output.write(color);
+            write_color(&output, color, 0, false);
         }
     }
     println!("DONE")

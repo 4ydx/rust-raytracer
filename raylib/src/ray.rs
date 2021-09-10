@@ -38,11 +38,7 @@ impl Ray {
     pub fn world_color(&self, world: &Hittables<Sphere>) -> Vec3 {
         let (hit, point) = world.hit(self, 0.0, f64::INFINITY);
         if hit {
-            return point
-                .normal
-                .add(&Vec3::new(1.0, 1.0, 1.0))
-                .mul(0.5)
-                .mul(255.999);
+            return point.normal.add(&Vec3::new(1.0, 1.0, 1.0)).mul(0.5);
         }
         return self.color();
     }
@@ -55,7 +51,7 @@ impl Ray {
 
         // linear interpolation (lerp)
         // blendedValue = (1−t) ⋅ startValue + t ⋅ endValue
-        white.mul(1.0 - t).add(&blue.mul(t)).mul(255.999)
+        white.mul(1.0 - t).add(&blue.mul(t))
     }
 
     // hit_sphere calculates whether or not a ray from the camera origin
