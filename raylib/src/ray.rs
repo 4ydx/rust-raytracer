@@ -25,7 +25,8 @@ impl Ray {
         if max_depth <= 0 {
             return Vec3::new(0.0, 0.0, 0.0);
         }
-        match world.hit(self, 0.0, f64::INFINITY) {
+        // 0.001 to prevent shadow acne
+        match world.hit(self, 0.001, f64::INFINITY) {
             Some(point) => {
                 let target = point.at.add(&point.normal).add(&random_in_unit_sphere());
                 let ray = Ray::new(point.at, target.sub(&point.at));
