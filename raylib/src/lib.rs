@@ -27,6 +27,15 @@ pub fn clamp(x: f64, min: f64, max: f64) -> f64 {
     x
 }
 
+pub fn random_in_hemisphere(normal: &vec::Vec3) -> vec::Vec3 {
+    let in_unit_sphere = random_in_unit_sphere();
+    if in_unit_sphere.dot(normal) > 0.0 {
+        in_unit_sphere
+    } else {
+        in_unit_sphere.mul(-1.0)
+    }
+}
+
 pub fn random_unit_vector() -> vec::Vec3 {
     random_in_unit_sphere().unit()
 }
