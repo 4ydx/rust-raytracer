@@ -4,20 +4,20 @@ use crate::vec::Vec3;
 #[derive(Default, Debug)]
 pub struct Hit {
     pub t: f64,
-    pub at: Vec3,
+    pub point: Vec3,
     pub normal: Vec3,
     pub front_face: bool,
 }
 
 pub trait Hittable {
-    fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> (bool, Hit);
+    fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<Hit>;
 }
 
 impl Hit {
-    pub fn new(t: f64, at: Vec3, normal: Vec3, front_face: bool) -> Hit {
+    pub fn new(t: f64, point: Vec3, normal: Vec3, front_face: bool) -> Hit {
         Hit {
             t: t,
-            at: at,
+            point: point,
             normal: normal,
             front_face: front_face,
         }
@@ -31,21 +31,18 @@ where
     T: Hittable,
 {
     pub fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<Hit> {
-        let mut hit_anything = false;
         let mut closest = t_max;
-        let mut current_at = Hit::default();
+        let mut current_point = None;
 
         for obj in self.0.iter() {
-            let (is_hit, at) = obj.hit(&ray, t_min, closest);
-            if is_hit {
-                hit_anything = true;
-                closest = at.t;
-                current_at = at;
+            match obj.hit(&ray, t_min, closest) {
+                Some(point) => {
+                    closest = point.t;
+                    current_point = Some(point);
+                }
+                None => {}
             }
         }
-        if hit_anything {
-            return Some(current_at);
-        }
-        None
+        current_point
     }
 }

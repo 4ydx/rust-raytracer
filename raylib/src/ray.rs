@@ -31,9 +31,9 @@ impl Ray {
             return Vec3::new(0.0, 0.0, 0.0);
         }
         match world.hit(self, world_hit_t_min, f64::INFINITY) {
-            Some(point) => {
-                let target = point.at.add(&point.normal).add(&random_in_unit_sphere());
-                let ray = Ray::new(point.at, target.sub(&point.at));
+            Some(hit) => {
+                let target = hit.point.add(&hit.normal).add(&random_in_unit_sphere());
+                let ray = Ray::new(hit.point, target.sub(&hit.point));
 
                 ray.diffused_world_color(&world, max_depth - 1, world_hit_t_min)
                     .mul(0.5)
