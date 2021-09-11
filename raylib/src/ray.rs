@@ -1,5 +1,4 @@
 use crate::hittable::Hittables;
-use crate::random_in_unit_sphere;
 use crate::sphere::Sphere;
 use crate::vec::Vec3;
 
@@ -26,16 +25,17 @@ impl Ray {
         world: &Hittables<Sphere>,
         max_depth: i32,
         world_hit_t_min: f64,
+        random_vec3: fn() -> Vec3,
     ) -> Vec3 {
         if max_depth <= 0 {
             return Vec3::new(0.0, 0.0, 0.0);
         }
         match world.hit(self, world_hit_t_min, f64::INFINITY) {
             Some(hit) => {
-                let target = hit.point.add(&hit.normal).add(&random_in_unit_sphere());
+                let target = hit.point.add(&hit.normal).add(&random_vec3());
                 let ray = Ray::new(hit.point, target.sub(&hit.point));
 
-                ray.diffused_world_color(&world, max_depth - 1, world_hit_t_min)
+                ray.diffused_world_color(&world, max_depth - 1, world_hit_t_min, random_vec3)
                     .mul(0.5)
             }
             None => self.color(),

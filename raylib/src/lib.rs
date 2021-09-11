@@ -27,6 +27,10 @@ pub fn clamp(x: f64, min: f64, max: f64) -> f64 {
     x
 }
 
+pub fn random_unit_vector() -> vec::Vec3 {
+    random_in_unit_sphere().unit()
+}
+
 pub fn random_in_unit_sphere() -> vec::Vec3 {
     loop {
         let p = vec::Vec3::random(-1.0, 1.0);

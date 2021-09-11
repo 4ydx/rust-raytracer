@@ -1,7 +1,8 @@
 extern crate raylib;
 
 use raylib::{
-    camera::Camera, file::File, hittable::Hittables, random, sphere::Sphere, vec::Vec3, write_color,
+    camera::Camera, file::File, hittable::Hittables, random, random_in_unit_sphere, sphere::Sphere,
+    vec::Vec3, write_color,
 };
 
 fn main() {
@@ -34,8 +35,12 @@ fn main() {
                 let v: f64 = (h as f64 + random()) / (height as f64 - 1.0);
                 let ray = camera.ray(u, v);
                 let world_hit_t_min = 0.0;
-                pixel_color =
-                    pixel_color.add(&ray.diffused_world_color(&world, max_depth, world_hit_t_min));
+                pixel_color = pixel_color.add(&ray.diffused_world_color(
+                    &world,
+                    max_depth,
+                    world_hit_t_min,
+                    random_in_unit_sphere,
+                ));
             }
             write_color(&output, pixel_color, samples_per_pixel, false);
         }
