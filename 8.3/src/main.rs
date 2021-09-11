@@ -18,11 +18,17 @@ fn main() {
     let camera = Camera::new();
 
     // world
-    let mut world: Hittables<Sphere> = Hittables(std::vec::Vec::new());
-    world.0.push(Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5));
+    let mut world: Hittables = Hittables {
+        list: std::vec::Vec::new(),
+    };
     world
-        .0
-        .push(Sphere::new(Vec3::new(0.0, -100.5, -1.0), 100.0));
+        .list
+        .push(Box::new(Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5, None)));
+    world.list.push(Box::new(Sphere::new(
+        Vec3::new(0.0, -100.5, -1.0),
+        100.0,
+        None,
+    )));
 
     // render
     let output = File::new("example.ppm", height, width);

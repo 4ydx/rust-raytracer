@@ -1,6 +1,5 @@
 use crate::hittable::Hittables;
 use crate::random_in_hemisphere;
-use crate::sphere::Sphere;
 use crate::vec::Vec3;
 
 #[derive(Debug)]
@@ -23,7 +22,7 @@ impl Ray {
 
     pub fn diffused_world_color_in_hemisphere(
         &self,
-        world: &Hittables<Sphere>,
+        world: &Hittables,
         max_depth: i32,
         world_hit_t_min: f64,
     ) -> Vec3 {
@@ -44,7 +43,7 @@ impl Ray {
 
     pub fn diffused_world_color(
         &self,
-        world: &Hittables<Sphere>,
+        world: &Hittables,
         max_depth: i32,
         world_hit_t_min: f64,
         random_vec3: fn() -> Vec3,
@@ -64,7 +63,7 @@ impl Ray {
         }
     }
 
-    pub fn world_color(&self, world: &Hittables<Sphere>) -> Vec3 {
+    pub fn world_color(&self, world: &Hittables) -> Vec3 {
         match world.hit(self, 0.0, f64::INFINITY) {
             Some(point) => point.normal.add(&Vec3::new(1.0, 1.0, 1.0)).mul(0.5),
             None => self.color(),
