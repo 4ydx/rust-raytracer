@@ -24,8 +24,8 @@ fn main() {
     let center = Lambertian {
         albedo: Vec3::new(0.7, 0.3, 0.3),
     };
-    let left = Metal::new(Vec3::new(0.8, 0.8, 0.8), 0.0);
-    let right = Metal::new(Vec3::new(0.8, 0.6, 0.2), 0.0);
+    let left = Metal::new(Vec3::new(0.8, 0.8, 0.8), 0.3);
+    let right = Metal::new(Vec3::new(0.8, 0.6, 0.2), 1.0);
 
     let mut world: Hittables = Hittables {
         list: std::vec::Vec::new(),
