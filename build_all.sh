@@ -10,7 +10,7 @@ for i in 3.3 4.2 5.2 6.1 6.2 6.7; do
 done
 
 # to slow to actually run the raytracer as a group
-for i in 7.2 8.2 8.3 8.4 8.5; do
+for i in 7.2 8.2 8.3 8.4 8.5 8.6; do
   echo "=============================================";
   echo $i;
   cd $i; cargo build; cd ..

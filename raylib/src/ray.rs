@@ -52,13 +52,26 @@ impl Ray {
             return Vec3::new(0.0, 0.0, 0.0);
         }
         match world.hit(self, world_hit_t_min, f64::INFINITY) {
-            Some(hit) => {
-                let target = hit.point.add(&hit.normal).add(&random_vec3());
-                let ray = Ray::new(hit.point, target.sub(&hit.point));
+            Some(hit) => match hit.material {
+                Some(material) => match material.scatter(self, hit) {
+                    Some((scattered, attenuation)) => {
+                        return attenuation.mul_vec(&scattered.diffused_world_color(
+                            &world,
+                            max_depth - 1,
+                            world_hit_t_min,
+                            random_vec3,
+                        ))
+                    }
+                    None => Vec3::new(0.0, 0.0, 0.0),
+                },
+                None => {
+                    let target = hit.point.add(&hit.normal).add(&random_vec3());
+                    let ray = Ray::new(hit.point, target.sub(&hit.point));
 
-                ray.diffused_world_color(&world, max_depth - 1, world_hit_t_min, random_vec3)
-                    .mul(0.5)
-            }
+                    ray.diffused_world_color(&world, max_depth - 1, world_hit_t_min, random_vec3)
+                        .mul(0.5)
+                }
+            },
             None => self.color(),
         }
     }

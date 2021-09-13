@@ -20,6 +20,20 @@ impl Vec3 {
         )
     }
 
+    pub fn near_zero(&self) -> bool {
+        let s = 1e-8;
+        self.x.abs() < s && self.y.abs() < s && self.z.abs() < s
+    }
+
+    pub fn reflect(&self, normal: &Vec3) -> Vec3 {
+        let val = normal.mul(2.0 * self.dot(&normal));
+        self.sub(&val)
+    }
+
+    pub fn mul_vec(&self, v: &Vec3) -> Vec3 {
+        Vec3::new(self.x * v.x, self.y * v.y, self.z * v.z)
+    }
+
     pub fn add(&self, v: &Vec3) -> Vec3 {
         Vec3::new(self.x + v.x, self.y + v.y, self.z + v.z)
     }

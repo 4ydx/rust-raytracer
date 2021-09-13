@@ -50,12 +50,14 @@ impl Hittable for Sphere {
         } else {
             normal = outward_normal.mul(-1.0);
         }
+
+        // https://doc.rust-lang.org/std/option/enum.Option.html#method.as_deref
         return Some(Hit::new(
             root,
             point,
             normal,
             front_face,
-            self.material.as_ref().map(Box::as_ref),
+            self.material.as_deref(),
         ));
     }
 }
