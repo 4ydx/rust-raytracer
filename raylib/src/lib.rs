@@ -1,6 +1,7 @@
 use rand::prelude::*;
 
 pub mod camera;
+pub mod dielectric;
 pub mod file;
 pub mod hittable;
 pub mod lambertian;

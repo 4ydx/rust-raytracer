@@ -30,6 +30,14 @@ impl Vec3 {
         self.sub(&val)
     }
 
+    pub fn refract(&self, normal: Vec3, etai_over_etat: f64) -> Vec3 {
+        let cos_theta = self.mul(-1.0).dot(&normal).min(1.0);
+        let r_out_perp = self.add(&normal.mul(cos_theta)).mul(etai_over_etat);
+        let r_out_parallel = normal.mul(-(1.0 - r_out_perp.length_squared()).abs().sqrt());
+
+        r_out_perp.add(&r_out_parallel)
+    }
+
     pub fn mul_vec(&self, v: &Vec3) -> Vec3 {
         Vec3::new(self.x * v.x, self.y * v.y, self.z * v.z)
     }
