@@ -1,10 +1,18 @@
 use crate::hittable::Hit;
 use crate::material::Material;
+use crate::random;
 use crate::ray::Ray;
 use crate::vec::Vec3;
 
 pub struct Dielectric {
     pub index_of_refraction: f64,
+}
+
+fn reflectance(cosine: f64, ref_idx: f64) -> f64 {
+    let mut r0 = (1.0 - ref_idx) / (1.0 + ref_idx);
+    r0 = r0 * r0;
+
+    r0 + (1.0 - r0) * (1.0 - cosine).powf(5.0)
 }
 
 impl Material for Dielectric {
@@ -23,7 +31,7 @@ impl Material for Dielectric {
 
         let cannot_refract = refraction_ratio * sin_theta > 1.0;
         let direction: Vec3;
-        if cannot_refract {
+        if cannot_refract || reflectance(cos_theta, refraction_ratio) > random() {
             direction = unit_direction.reflect(&hit.normal);
         } else {
             direction = unit_direction.refract(&hit.normal, refraction_ratio);
