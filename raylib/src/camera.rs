@@ -1,6 +1,6 @@
+use crate::degrees_to_radians;
 use crate::ray::Ray;
 use crate::vec::Vec3;
-use crate::degrees_to_radians;
 
 pub struct Camera {
     pub origin: Vec3,
@@ -45,13 +45,44 @@ impl Camera {
         build_camera(viewport_width, viewport_height)
     }
 
-    pub fn ray(&self, u: f64, v: f64) -> Ray {
+    pub fn from(
+        look_from: Vec3,
+        look_at: Vec3,
+        view_up: Vec3,
+        vfov: f64,
+        aspect_ratio: f64,
+    ) -> Camera {
+        let theta = degrees_to_radians(vfov);
+        let h = (theta / 2.0).tan();
+        let viewport_height = 2.0 * h;
+        let viewport_width = aspect_ratio * viewport_height;
+
+        let w = look_from.sub(&look_at).unit();
+        let u = view_up.cross(&w).unit();
+        let v = w.cross(&u);
+
+        let origin = look_from;
+        let horizontal = u.mul(viewport_width);
+        let vertical = v.mul(viewport_height);
+
+        Camera {
+            origin: origin,
+            horizontal: horizontal,
+            vertical: vertical,
+            lower_left_corner: origin
+                .sub(&horizontal.div(2.0))
+                .sub(&vertical.div(2.0))
+                .sub(&w),
+        }
+    }
+
+    pub fn ray(&self, s: f64, t: f64) -> Ray {
         Ray {
             origin: self.origin,
             direction: self
                 .lower_left_corner
-                .add(&self.horizontal.mul(u))
-                .add(&self.vertical.mul(v))
+                .add(&self.horizontal.mul(s))
+                .add(&self.vertical.mul(t))
                 .sub(&self.origin),
         }
     }
