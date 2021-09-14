@@ -41,12 +41,13 @@ fn main() {
                 let v: f64 = (h as f64 + random()) / (height as f64 - 1.0);
                 let ray = camera.ray(u, v);
                 let world_hit_t_min = 0.001;
-                pixel_color = pixel_color.add(&ray.diffused_world_color(
-                    &world,
-                    max_depth,
-                    world_hit_t_min,
-                    random_unit_vector,
-                ));
+                pixel_color = pixel_color
+                    + ray.diffused_world_color(
+                        &world,
+                        max_depth,
+                        world_hit_t_min,
+                        random_unit_vector,
+                    );
             }
             write_color(&output, pixel_color, samples_per_pixel, false);
         }

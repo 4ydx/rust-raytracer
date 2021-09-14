@@ -27,15 +27,15 @@ impl Material for Dielectric {
         }
         let unit_direction = ray.direction.unit();
 
-        let cos_theta = unit_direction.mul(-1.0).dot(&hit.normal).min(1.0);
+        let cos_theta = (-unit_direction).dot(&hit.normal).min(1.0);
         let sin_theta = (1.0 - cos_theta * cos_theta).sqrt();
 
         let cannot_refract = refraction_ratio * sin_theta > 1.0;
         let direction: Vec3;
         if cannot_refract || reflectance(cos_theta, refraction_ratio) > random() {
-            direction = unit_direction.reflect(&hit.normal);
+            direction = unit_direction.reflect(hit.normal);
         } else {
-            direction = unit_direction.refract(&hit.normal, refraction_ratio);
+            direction = unit_direction.refract(hit.normal, refraction_ratio);
         }
 
         let scattered = Ray::new(hit.point, direction);

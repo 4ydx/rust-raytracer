@@ -21,9 +21,9 @@ fn build_camera(viewport_width: f64, viewport_height: f64) -> Camera {
         horizontal: horizontal,
         vertical: vertical,
         lower_left_corner: origin
-            .sub(&horizontal.div(2.0))
-            .sub(&vertical.div(2.0))
-            .sub(&Vec3::new(0.0, 0.0, focal_length)),
+            - horizontal / 2.0
+            - vertical / 2.0
+            - Vec3::new(0.0, 0.0, focal_length),
     }
 }
 
@@ -57,33 +57,29 @@ impl Camera {
         let viewport_height = 2.0 * h;
         let viewport_width = aspect_ratio * viewport_height;
 
-        let w = look_from.sub(&look_at).unit();
+        let w = (look_from - look_at).unit();
         let u = view_up.cross(&w).unit();
         let v = w.cross(&u);
 
         let origin = look_from;
-        let horizontal = u.mul(viewport_width);
-        let vertical = v.mul(viewport_height);
+        let horizontal = u * viewport_width;
+        let vertical = v * viewport_height;
 
         Camera {
             origin: origin,
             horizontal: horizontal,
             vertical: vertical,
-            lower_left_corner: origin
-                .sub(&horizontal.div(2.0))
-                .sub(&vertical.div(2.0))
-                .sub(&w),
+            lower_left_corner: origin - (horizontal / 2.0) - (vertical / 2.0) - w,
         }
     }
 
     pub fn ray(&self, s: f64, t: f64) -> Ray {
         Ray {
             origin: self.origin,
-            direction: self
-                .lower_left_corner
-                .add(&self.horizontal.mul(s))
-                .add(&self.vertical.mul(t))
-                .sub(&self.origin),
+            direction: self.lower_left_corner
+                + self.horizontal * s
+                + self.vertical * t
+                - self.origin,
         }
     }
 }

@@ -17,7 +17,7 @@ impl Ray {
     }
 
     pub fn at(&self, t: f64) -> Vec3 {
-        self.origin.add(&self.direction.mul(t))
+        self.origin + self.direction * t
     }
 
     pub fn diffused_world_color_in_hemisphere(
@@ -31,11 +31,10 @@ impl Ray {
         }
         match world.hit(self, world_hit_t_min, f64::INFINITY) {
             Some(hit) => {
-                let target = hit.point.add(&random_in_hemisphere(&hit.normal));
-                let ray = Ray::new(hit.point, target.sub(&hit.point));
+                let target = hit.point + random_in_hemisphere(&hit.normal);
+                let ray = Ray::new(hit.point, target - hit.point);
 
-                ray.diffused_world_color_in_hemisphere(&world, max_depth - 1, world_hit_t_min)
-                    .mul(0.5)
+                ray.diffused_world_color_in_hemisphere(&world, max_depth - 1, world_hit_t_min) * 0.5
             }
             None => self.color(),
         }
@@ -55,21 +54,22 @@ impl Ray {
             Some(hit) => match hit.material {
                 Some(material) => match material.scatter(self, hit) {
                     Some((scattered, attenuation)) => {
-                        return attenuation.mul_vec(&scattered.diffused_world_color(
-                            &world,
-                            max_depth - 1,
-                            world_hit_t_min,
-                            random_vec3,
-                        ))
+                        return attenuation
+                            * scattered.diffused_world_color(
+                                &world,
+                                max_depth - 1,
+                                world_hit_t_min,
+                                random_vec3,
+                            )
                     }
                     None => Vec3::new(0.0, 0.0, 0.0),
                 },
                 None => {
-                    let target = hit.point.add(&hit.normal).add(&random_vec3());
-                    let ray = Ray::new(hit.point, target.sub(&hit.point));
+                    let target = hit.point + hit.normal + random_vec3();
+                    let ray = Ray::new(hit.point, target - hit.point);
 
                     ray.diffused_world_color(&world, max_depth - 1, world_hit_t_min, random_vec3)
-                        .mul(0.5)
+                        * 0.5
                 }
             },
             None => self.color(),
@@ -78,7 +78,7 @@ impl Ray {
 
     pub fn world_color(&self, world: &Hittables) -> Vec3 {
         match world.hit(self, 0.0, f64::INFINITY) {
-            Some(point) => point.normal.add(&Vec3::new(1.0, 1.0, 1.0)).mul(0.5),
+            Some(point) => (point.normal + Vec3::new(1.0, 1.0, 1.0)) * 0.5,
             None => self.color(),
         }
     }
@@ -91,7 +91,7 @@ impl Ray {
 
         // linear interpolation (lerp)
         // blendedValue = (1−t) ⋅ startValue + t ⋅ endValue
-        white.mul(1.0 - t).add(&blue.mul(t))
+        white * (1.0 - t) + blue * t
     }
 
     // hit_sphere calculates whether or not a ray from the camera origin
@@ -126,7 +126,7 @@ impl Ray {
     // giving discriminant
     // (h^2 - ac)
     pub fn hit_sphere(&self, center: Vec3, radius: f64) -> f64 {
-        let oc = self.origin.sub(&center);
+        let oc = self.origin - center;
 
         // vector dotted with itself is equal to squared length of the vector
         //

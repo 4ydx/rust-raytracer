@@ -1,10 +1,59 @@
 use crate::random_between;
+use std::ops;
 
 #[derive(Copy, Clone, Debug, Default)]
 pub struct Vec3 {
     pub x: f64,
     pub y: f64,
     pub z: f64,
+}
+
+impl ops::Neg for Vec3 {
+    type Output = Vec3;
+
+    fn neg(self) -> Vec3 {
+        Vec3::new(-self.x, -self.y, -self.z)
+    }
+}
+
+impl ops::Add<Vec3> for Vec3 {
+    type Output = Vec3;
+
+    fn add(self, rhs: Vec3) -> Vec3 {
+        Vec3::new(self.x + rhs.x, self.y + rhs.y, self.z + rhs.z)
+    }
+}
+
+impl ops::Sub<Vec3> for Vec3 {
+    type Output = Vec3;
+
+    fn sub(self, rhs: Vec3) -> Vec3 {
+        Vec3::new(self.x - rhs.x, self.y - rhs.y, self.z - rhs.z)
+    }
+}
+
+impl ops::Mul<Vec3> for Vec3 {
+    type Output = Vec3;
+
+    fn mul(self, rhs: Vec3) -> Vec3 {
+        Vec3::new(self.x * rhs.x, self.y * rhs.y, self.z * rhs.z)
+    }
+}
+
+impl ops::Mul<f64> for Vec3 {
+    type Output = Vec3;
+
+    fn mul(self, rhs: f64) -> Vec3 {
+        Vec3::new(self.x * rhs, self.y * rhs, self.z * rhs)
+    }
+}
+
+impl ops::Div<f64> for Vec3 {
+    type Output = Vec3;
+
+    fn div(self, divisor: f64) -> Vec3 {
+        Vec3::new(self.x / divisor, self.y / divisor, self.z / divisor)
+    }
 }
 
 impl Vec3 {
@@ -25,37 +74,16 @@ impl Vec3 {
         self.x.abs() < s && self.y.abs() < s && self.z.abs() < s
     }
 
-    pub fn reflect(&self, normal: &Vec3) -> Vec3 {
-        let val = normal.mul(2.0 * self.dot(&normal));
-        self.sub(&val)
+    pub fn reflect(self, normal: Vec3) -> Vec3 {
+        self - normal * (2.0 * self.dot(&normal))
     }
 
-    pub fn refract(&self, normal: &Vec3, etai_over_etat: f64) -> Vec3 {
-        let cos_theta = self.mul(-1.0).dot(&normal).min(1.0);
-        let r_out_perp = self.add(&normal.mul(cos_theta)).mul(etai_over_etat);
-        let r_out_parallel = normal.mul(-(1.0 - r_out_perp.length_squared()).abs().sqrt());
+    pub fn refract(self, normal: Vec3, etai_over_etat: f64) -> Vec3 {
+        let cos_theta = (-self).dot(&normal).min(1.0);
+        let r_out_perp = (self + normal * cos_theta) * etai_over_etat;
+        let r_out_parallel = normal * (-(1.0 - r_out_perp.length_squared()).abs().sqrt());
 
-        r_out_perp.add(&r_out_parallel)
-    }
-
-    pub fn mul_vec(&self, v: &Vec3) -> Vec3 {
-        Vec3::new(self.x * v.x, self.y * v.y, self.z * v.z)
-    }
-
-    pub fn add(&self, v: &Vec3) -> Vec3 {
-        Vec3::new(self.x + v.x, self.y + v.y, self.z + v.z)
-    }
-
-    pub fn sub(&self, v: &Vec3) -> Vec3 {
-        Vec3::new(self.x - v.x, self.y - v.y, self.z - v.z)
-    }
-
-    pub fn mul(&self, t: f64) -> Vec3 {
-        Vec3::new(self.x * t, self.y * t, self.z * t)
-    }
-
-    pub fn div(&self, divisor: f64) -> Vec3 {
-        Vec3::new(self.x / divisor, self.y / divisor, self.z / divisor)
+        r_out_perp + r_out_parallel
     }
 
     pub fn sqrt(&self) -> Vec3 {
@@ -82,8 +110,8 @@ impl Vec3 {
         )
     }
 
-    pub fn unit(&self) -> Vec3 {
-        self.div(self.length())
+    pub fn unit(self) -> Vec3 {
+        self / self.length()
     }
 }
 

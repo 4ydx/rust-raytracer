@@ -37,8 +37,7 @@ fn main() {
             for _ in 0..samples_per_pixel {
                 let u: f64 = (w as f64 + random()) / (width as f64 - 1.0);
                 let v: f64 = (h as f64 + random()) / (height as f64 - 1.0);
-                let ray = camera.ray(u, v);
-                pixel_color = pixel_color.add(&ray.world_color(&world));
+                pixel_color = pixel_color + camera.ray(u, v).world_color(&world);
             }
             write_color(&output, pixel_color, samples_per_pixel, false);
         }

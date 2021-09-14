@@ -21,7 +21,7 @@ impl Sphere {
 
 impl Hittable for Sphere {
     fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<Hit> {
-        let oc = ray.origin.sub(&self.center);
+        let oc = ray.origin - self.center;
         let a = ray.direction.length_squared();
         let h = ray.direction.dot(&oc);
         let c = oc.length_squared() - self.radius * self.radius;
@@ -41,14 +41,14 @@ impl Hittable for Sphere {
         }
 
         let point = ray.at(root);
-        let outward_normal = point.sub(&self.center).div(self.radius);
+        let outward_normal = (point - self.center) / self.radius;
         let front_face = ray.direction.dot(&outward_normal) < 0.0;
 
         let normal: Vec3;
         if front_face {
             normal = outward_normal;
         } else {
-            normal = outward_normal.mul(-1.0);
+            normal = -outward_normal;
         }
 
         // https://doc.rust-lang.org/std/option/enum.Option.html#method.as_deref

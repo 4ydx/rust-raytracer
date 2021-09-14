@@ -40,7 +40,7 @@ pub fn random_in_hemisphere(normal: &vec::Vec3) -> vec::Vec3 {
     if in_unit_sphere.dot(normal) > 0.0 {
         in_unit_sphere
     } else {
-        in_unit_sphere.mul(-1.0)
+        -in_unit_sphere
     }
 }
 
@@ -64,12 +64,12 @@ pub fn write_color(
     gamma_correct: bool,
 ) {
     if samples_per_pixel == 0 {
-        let adjusted_color = color.mul(255.999);
+        let adjusted_color = color * 255.999;
         output.write(adjusted_color);
         return;
     }
     let scale = 1.0 / samples_per_pixel as f64;
-    let mut adjusted_color = color.mul(scale);
+    let mut adjusted_color = color * scale;
     if gamma_correct {
         adjusted_color = adjusted_color.sqrt();
     }
