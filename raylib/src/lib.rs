@@ -35,6 +35,15 @@ pub fn clamp(x: f64, min: f64, max: f64) -> f64 {
     x
 }
 
+pub fn random_in_unit_disk() -> vec::Vec3 {
+    loop {
+        let p = vec::Vec3::new(random_between(-1.0, 1.0), random_between(-1.0, 1.0), 0.0);
+        if p.length_squared() < 1.0 {
+            return p;
+        }
+    }
+}
+
 pub fn random_in_hemisphere(normal: &vec::Vec3) -> vec::Vec3 {
     let in_unit_sphere = random_in_unit_sphere();
     if in_unit_sphere.dot(normal) > 0.0 {
