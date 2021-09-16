@@ -37,6 +37,12 @@ pub struct Hittables {
 }
 
 impl Hittables {
+    pub fn new() -> Hittables {
+        Hittables {
+            list: std::vec::Vec::new(),
+        }
+    }
+
     pub fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<Hit> {
         let mut closest = t_max;
         let mut current_point = None;

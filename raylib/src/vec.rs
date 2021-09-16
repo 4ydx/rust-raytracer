@@ -1,4 +1,4 @@
-use crate::random_between;
+use crate::{random, random_between};
 use std::ops;
 
 #[derive(Copy, Clone, Debug, Default)]
@@ -61,11 +61,15 @@ impl Vec3 {
         Vec3 { x: x, y: y, z: z }
     }
 
-    pub fn random(min: f64, max: f64) -> Vec3 {
+    pub fn random(rng: &mut rand::rngs::ThreadRng) -> Vec3 {
+        Vec3::new(random(rng), random(rng), random(rng))
+    }
+
+    pub fn random_between(min: f64, max: f64, rng: &mut rand::rngs::ThreadRng) -> Vec3 {
         Vec3::new(
-            random_between(min, max),
-            random_between(min, max),
-            random_between(min, max),
+            random_between(min, max, rng),
+            random_between(min, max, rng),
+            random_between(min, max, rng),
         )
     }
 

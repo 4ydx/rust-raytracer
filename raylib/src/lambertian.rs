@@ -8,9 +8,20 @@ pub struct Lambertian {
     pub albedo: Vec3,
 }
 
+impl Lambertian {
+    pub fn new(albedo: Vec3) -> Lambertian {
+        Lambertian { albedo: albedo }
+    }
+}
+
 impl Material for Lambertian {
-    fn scatter(&self, _ray: &Ray, hit: Hit) -> Option<(Ray, Vec3)> {
-        let mut scatter_direction = hit.normal + random_unit_vector();
+    fn scatter(
+        &self,
+        _ray: &Ray,
+        hit: Hit,
+        rng: &mut rand::rngs::ThreadRng,
+    ) -> Option<(Ray, Vec3)> {
+        let mut scatter_direction = hit.normal + random_unit_vector(rng);
 
         if scatter_direction.near_zero() {
             scatter_direction = hit.normal;

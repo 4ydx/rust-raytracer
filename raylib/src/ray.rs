@@ -25,16 +25,18 @@ impl Ray {
         world: &Hittables,
         max_depth: i32,
         world_hit_t_min: f64,
+        rng: &mut rand::rngs::ThreadRng,
     ) -> Vec3 {
         if max_depth <= 0 {
             return Vec3::new(0.0, 0.0, 0.0);
         }
         match world.hit(self, world_hit_t_min, f64::INFINITY) {
             Some(hit) => {
-                let target = hit.point + random_in_hemisphere(&hit.normal);
+                let target = hit.point + random_in_hemisphere(&hit.normal, rng);
                 let ray = Ray::new(hit.point, target - hit.point);
 
-                ray.diffused_world_color_in_hemisphere(&world, max_depth - 1, world_hit_t_min) * 0.5
+                ray.diffused_world_color_in_hemisphere(&world, max_depth - 1, world_hit_t_min, rng)
+                    * 0.5
             }
             None => self.color(),
         }
@@ -45,14 +47,15 @@ impl Ray {
         world: &Hittables,
         max_depth: i32,
         world_hit_t_min: f64,
-        random_vec3: fn() -> Vec3,
+        random_vec3: fn(&mut rand::rngs::ThreadRng) -> Vec3,
+        rng: &mut rand::rngs::ThreadRng,
     ) -> Vec3 {
         if max_depth <= 0 {
             return Vec3::new(0.0, 0.0, 0.0);
         }
         match world.hit(self, world_hit_t_min, f64::INFINITY) {
             Some(hit) => match hit.material {
-                Some(material) => match material.scatter(self, hit) {
+                Some(material) => match material.scatter(self, hit, rng) {
                     Some((scattered, attenuation)) => {
                         return attenuation
                             * scattered.diffused_world_color(
@@ -60,16 +63,22 @@ impl Ray {
                                 max_depth - 1,
                                 world_hit_t_min,
                                 random_vec3,
+                                rng,
                             )
                     }
                     None => Vec3::new(0.0, 0.0, 0.0),
                 },
                 None => {
-                    let target = hit.point + hit.normal + random_vec3();
+                    let target = hit.point + hit.normal + random_vec3(rng);
                     let ray = Ray::new(hit.point, target - hit.point);
 
-                    ray.diffused_world_color(&world, max_depth - 1, world_hit_t_min, random_vec3)
-                        * 0.5
+                    ray.diffused_world_color(
+                        &world,
+                        max_depth - 1,
+                        world_hit_t_min,
+                        random_vec3,
+                        rng,
+                    ) * 0.5
                 }
             },
             None => self.color(),

@@ -11,13 +11,12 @@ pub mod ray;
 pub mod sphere;
 pub mod vec;
 
-pub fn random() -> f64 {
-    let mut rng = thread_rng();
+pub fn random(rng: &mut rand::rngs::ThreadRng) -> f64 {
     rng.gen()
 }
 
-pub fn random_between(min: f64, max: f64) -> f64 {
-    min + (max - min) * random()
+pub fn random_between(min: f64, max: f64, rng: &mut rand::rngs::ThreadRng) -> f64 {
+    min + (max - min) * random(rng)
 }
 
 pub fn degrees_to_radians(degrees: f64) -> f64 {
@@ -35,17 +34,21 @@ pub fn clamp(x: f64, min: f64, max: f64) -> f64 {
     x
 }
 
-pub fn random_in_unit_disk() -> vec::Vec3 {
+pub fn random_in_unit_disk(rng: &mut rand::rngs::ThreadRng) -> vec::Vec3 {
     loop {
-        let p = vec::Vec3::new(random_between(-1.0, 1.0), random_between(-1.0, 1.0), 0.0);
+        let p = vec::Vec3::new(
+            random_between(-1.0, 1.0, rng),
+            random_between(-1.0, 1.0, rng),
+            0.0,
+        );
         if p.length_squared() < 1.0 {
             return p;
         }
     }
 }
 
-pub fn random_in_hemisphere(normal: &vec::Vec3) -> vec::Vec3 {
-    let in_unit_sphere = random_in_unit_sphere();
+pub fn random_in_hemisphere(normal: &vec::Vec3, rng: &mut rand::rngs::ThreadRng) -> vec::Vec3 {
+    let in_unit_sphere = random_in_unit_sphere(rng);
     if in_unit_sphere.dot(normal) > 0.0 {
         in_unit_sphere
     } else {
@@ -53,13 +56,13 @@ pub fn random_in_hemisphere(normal: &vec::Vec3) -> vec::Vec3 {
     }
 }
 
-pub fn random_unit_vector() -> vec::Vec3 {
-    random_in_unit_sphere().unit()
+pub fn random_unit_vector(rng: &mut rand::rngs::ThreadRng) -> vec::Vec3 {
+    random_in_unit_sphere(rng).unit()
 }
 
-pub fn random_in_unit_sphere() -> vec::Vec3 {
+pub fn random_in_unit_sphere(rng: &mut rand::rngs::ThreadRng) -> vec::Vec3 {
     loop {
-        let p = vec::Vec3::random(-1.0, 1.0);
+        let p = vec::Vec3::random_between(-1.0, 1.0, rng);
         if p.length_squared() < 1.0 {
             return p;
         }

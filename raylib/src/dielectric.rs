@@ -16,8 +16,16 @@ fn reflectance(cosine: f64, ref_idx: f64) -> f64 {
     r0 + (1.0 - r0) * (1.0 - cosine).powf(5.0)
 }
 
+impl Dielectric {
+    pub fn new(index_of_refraction: f64) -> Dielectric {
+        Dielectric {
+            index_of_refraction,
+        }
+    }
+}
+
 impl Material for Dielectric {
-    fn scatter(&self, ray: &Ray, hit: Hit) -> Option<(Ray, Vec3)> {
+    fn scatter(&self, ray: &Ray, hit: Hit, rng: &mut rand::rngs::ThreadRng) -> Option<(Ray, Vec3)> {
         let attenuation = Vec3::new(1.0, 1.0, 1.0);
         let refraction_ratio: f64;
         if hit.front_face {
@@ -32,7 +40,7 @@ impl Material for Dielectric {
 
         let cannot_refract = refraction_ratio * sin_theta > 1.0;
         let direction: Vec3;
-        if cannot_refract || reflectance(cos_theta, refraction_ratio) > random() {
+        if cannot_refract || reflectance(cos_theta, refraction_ratio) > random(rng) {
             direction = unit_direction.reflect(hit.normal);
         } else {
             direction = unit_direction.refract(hit.normal, refraction_ratio);

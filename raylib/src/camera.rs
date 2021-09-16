@@ -129,8 +129,8 @@ impl Camera {
         }
     }
 
-    pub fn ray_12_2(&self, s: f64, t: f64) -> Ray {
-        let rd = random_in_unit_disk() * self.lens_radius;
+    pub fn ray_12_2(&self, s: f64, t: f64, rng: &mut rand::rngs::ThreadRng) -> Ray {
+        let rd = random_in_unit_disk(rng) * self.lens_radius;
         let offset = self.u * rd.x + self.v * rd.y;
 
         Ray {
