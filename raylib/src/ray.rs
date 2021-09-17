@@ -1,6 +1,6 @@
 use crate::hittable::Hittables;
-use crate::random_in_hemisphere;
 use crate::vec::Vec3;
+use crate::{random_in_hemisphere, random_in_unit_sphere, random_unit_vector};
 
 #[derive(Debug)]
 pub struct Ray {
@@ -24,8 +24,7 @@ impl Ray {
         let dir = self.direction.unit();
         let t = 0.5 * (dir.y + 1.0);
 
-        // linear interpolation (lerp)
-        // blendedValue = (1−t) ⋅ startValue + t ⋅ endValue
+        // linear interpolation (lerp): blendedValue = (1−t) ⋅ startValue + t ⋅ endValue
         Vec3::new(1.0, 1.0, 1.0) * (1.0 - t) + Vec3::new(0.5, 0.7, 1.0) * t
     }
 
@@ -56,28 +55,86 @@ impl Ray {
 
     pub fn color_06_7(&self, world: &Hittables) -> Vec3 {
         match world.hit(self, 0.0, f64::INFINITY) {
-            Some(point) => (point.normal + Vec3::new(1.0, 1.0, 1.0)) * 0.5,
+            Some(hit) => (hit.normal + Vec3::new(1.0, 1.0, 1.0)) * 0.5,
             None => self.color_04_2(),
         }
     }
 
-    pub fn diffused_world_color_in_hemisphere(
+    pub fn color_08_2(
+        &self,
+        world: &Hittables,
+        depth: i32,
+        rng: &mut rand::rngs::ThreadRng,
+    ) -> Vec3 {
+        if depth <= 0 {
+            return Vec3::new(0.0, 0.0, 0.0);
+        }
+        match world.hit(self, 0.0, f64::INFINITY) {
+            Some(hit) => {
+                let target = hit.point + hit.normal + random_in_unit_sphere(rng);
+                let ray = Ray::new(hit.point, target - hit.point);
+
+                ray.color_08_2(&world, depth - 1, rng) * 0.5
+            }
+            None => self.color_04_2(),
+        }
+    }
+
+    pub fn color_08_4(
+        &self,
+        world: &Hittables,
+        depth: i32,
+        rng: &mut rand::rngs::ThreadRng,
+    ) -> Vec3 {
+        if depth <= 0 {
+            return Vec3::new(0.0, 0.0, 0.0);
+        }
+        match world.hit(self, 0.001, f64::INFINITY) {
+            Some(hit) => {
+                let target = hit.point + hit.normal + random_in_unit_sphere(rng);
+                let ray = Ray::new(hit.point, target - hit.point);
+
+                ray.color_08_4(&world, depth - 1, rng) * 0.5
+            }
+            None => self.color_04_2(),
+        }
+    }
+
+    pub fn color_08_5(
+        &self,
+        world: &Hittables,
+        depth: i32,
+        rng: &mut rand::rngs::ThreadRng,
+    ) -> Vec3 {
+        if depth <= 0 {
+            return Vec3::new(0.0, 0.0, 0.0);
+        }
+        match world.hit(self, 0.001, f64::INFINITY) {
+            Some(hit) => {
+                let target = hit.point + hit.normal + random_unit_vector(rng);
+                let ray = Ray::new(hit.point, target - hit.point);
+
+                ray.color_08_5(&world, depth - 1, rng) * 0.5
+            }
+            None => self.color_04_2(),
+        }
+    }
+
+    pub fn color_08_6(
         &self,
         world: &Hittables,
         max_depth: i32,
-        world_hit_t_min: f64,
         rng: &mut rand::rngs::ThreadRng,
     ) -> Vec3 {
         if max_depth <= 0 {
             return Vec3::new(0.0, 0.0, 0.0);
         }
-        match world.hit(self, world_hit_t_min, f64::INFINITY) {
+        match world.hit(self, 0.001, f64::INFINITY) {
             Some(hit) => {
                 let target = hit.point + random_in_hemisphere(&hit.normal, rng);
                 let ray = Ray::new(hit.point, target - hit.point);
 
-                ray.diffused_world_color_in_hemisphere(&world, max_depth - 1, world_hit_t_min, rng)
-                    * 0.5
+                ray.color_08_6(&world, max_depth - 1, rng) * 0.5
             }
             None => self.color_04_2(),
         }
@@ -126,7 +183,6 @@ impl Ray {
         }
     }
 
-
     pub fn hit_sphere_05_2(&self, center: Vec3, radius: f64) -> bool {
         let oc = self.origin - center;
         let a = self.direction.dot(&self.direction);
@@ -150,7 +206,6 @@ impl Ray {
         (-b - discriminant.sqrt()) / (2.0 * a)
     }
 
-    // See hit_sphere_06_1 for differences
     pub fn hit_sphere_06_2(&self, center: Vec3, radius: f64) -> f64 {
         let oc = self.origin - center;
 
