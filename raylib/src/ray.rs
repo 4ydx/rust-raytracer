@@ -20,15 +20,29 @@ impl Ray {
         self.origin + self.direction * t
     }
 
-    pub fn color(&self) -> Vec3 {
+    pub fn color_04_2(&self) -> Vec3 {
         let dir = self.direction.unit();
         let t = 0.5 * (dir.y + 1.0);
 
         // linear interpolation (lerp)
         // blendedValue = (1−t) ⋅ startValue + t ⋅ endValue
-        let white = Vec3::new(1.0, 1.0, 1.0);
-        let blue = Vec3::new(0.5, 0.7, 1.0);
-        white * (1.0 - t) + blue * t
+        Vec3::new(1.0, 1.0, 1.0) * (1.0 - t) + Vec3::new(0.5, 0.7, 1.0) * t
+    }
+
+    pub fn color_05_2(&self) -> Vec3 {
+        if self.hit_sphere_05_2(Vec3::new(0.0, 0.0, -1.0), 0.5) {
+            return Vec3::new(1.0, 0.0, 0.0);
+        }
+        self.color_04_2()
+    }
+
+    pub fn color_06_1(&self) -> Vec3 {
+        let t = self.hit_sphere_06_1(Vec3::new(0.0, 0.0, -1.0), 0.5);
+        if t > 0.0 {
+            let normal = (self.at(t) - Vec3::new(0.0, 0.0, -1.0)).unit();
+            return Vec3::new(normal.x + 1.0, normal.y + 1.0, normal.z + 1.0) * 0.5;
+        }
+        self.color_04_2()
     }
 
     pub fn diffused_world_color_in_hemisphere(
@@ -49,7 +63,7 @@ impl Ray {
                 ray.diffused_world_color_in_hemisphere(&world, max_depth - 1, world_hit_t_min, rng)
                     * 0.5
             }
-            None => self.color(),
+            None => self.color_04_2(),
         }
     }
 
@@ -92,14 +106,14 @@ impl Ray {
                     ) * 0.5
                 }
             },
-            None => self.color(),
+            None => self.color_04_2(),
         }
     }
 
     pub fn world_color(&self, world: &Hittables) -> Vec3 {
         match world.hit(self, 0.0, f64::INFINITY) {
             Some(point) => (point.normal + Vec3::new(1.0, 1.0, 1.0)) * 0.5,
-            None => self.color(),
+            None => self.color_04_2(),
         }
     }
 
@@ -113,7 +127,7 @@ impl Ray {
         discriminant > 0.0
     }
 
-    pub fn hit_sphere(&self, center: Vec3, radius: f64) -> f64 {
+    pub fn hit_sphere_06_1(&self, center: Vec3, radius: f64) -> f64 {
         let oc = self.origin - center;
 
         // vector dotted with itself is equal to squared length of the vector

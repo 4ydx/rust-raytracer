@@ -33,7 +33,7 @@ fn main() {
                 origin: origin,
                 direction: lower_left_corner + horizontal * u + vertical * v - origin,
             };
-            write_color_03_3(&output, ray.color());
+            write_color_03_3(&output, ray.color_04_2());
         }
     }
     println!("DONE")

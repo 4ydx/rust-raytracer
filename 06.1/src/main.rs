@@ -35,16 +35,7 @@ fn main() {
                 origin: origin,
                 direction: direction,
             };
-
-            let color: Vec3;
-            let t = ray.hit_sphere(Vec3::new(0.0, 0.0, -1.0), 0.5);
-            if t > 0.0 {
-                let normal = (ray.at(t) - Vec3::new(0.0, 0.0, -1.0)).unit();
-                color = Vec3::new(normal.x + 1.0, normal.y + 1.0, normal.z + 1.0) * 0.5;
-            } else {
-                color = ray.color();
-            }
-            write_color(&output, color, 0, false);
+            write_color(&output, ray.color_06_1(), 0, false);
         }
     }
     println!("DONE")

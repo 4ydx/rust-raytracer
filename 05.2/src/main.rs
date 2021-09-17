@@ -35,13 +35,7 @@ fn main() {
                 origin: origin,
                 direction: direction,
             };
-            let color: Vec3;
-            if ray.hit_sphere_05_2(Vec3::new(0.0, 0.0, -1.0), 0.5) {
-                color = Vec3::new(1.0, 0.0, 0.0); //.mul(255.999);
-            } else {
-                color = ray.color();
-            }
-            write_color(&output, color, 0, false);
+            write_color(&output, ray.color_05_2(), 0, false);
         }
     }
     println!("DONE")
