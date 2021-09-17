@@ -54,6 +54,13 @@ impl Ray {
         self.color_04_2()
     }
 
+    pub fn color_06_7(&self, world: &Hittables) -> Vec3 {
+        match world.hit(self, 0.0, f64::INFINITY) {
+            Some(point) => (point.normal + Vec3::new(1.0, 1.0, 1.0)) * 0.5,
+            None => self.color_04_2(),
+        }
+    }
+
     pub fn diffused_world_color_in_hemisphere(
         &self,
         world: &Hittables,
@@ -119,12 +126,6 @@ impl Ray {
         }
     }
 
-    pub fn world_color(&self, world: &Hittables) -> Vec3 {
-        match world.hit(self, 0.0, f64::INFINITY) {
-            Some(point) => (point.normal + Vec3::new(1.0, 1.0, 1.0)) * 0.5,
-            None => self.color_04_2(),
-        }
-    }
 
     pub fn hit_sphere_05_2(&self, center: Vec3, radius: f64) -> bool {
         let oc = self.origin - center;

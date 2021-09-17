@@ -35,7 +35,7 @@ fn main() {
             let u: f64 = w as f64 / (width as f64 - 1.0);
             let v: f64 = h as f64 / (height as f64 - 1.0);
             let ray = camera.ray(u, v);
-            write_color(&output, ray.world_color(&world), 0, false);
+            write_color(&output, ray.color_06_7(&world), 0, false);
         }
     }
     println!("DONE")
