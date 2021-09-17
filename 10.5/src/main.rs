@@ -1,12 +1,14 @@
 extern crate raylib;
 
+use rand::prelude::*;
 use raylib::{
-    camera::Camera, dielectric::Dielectric, file::File, hittable::Hittables,
-    lambertian::Lambertian, metal::Metal, random, random_unit_vector, sphere::Sphere, vec::Vec3,
-    write_color,
+    camera::Camera, dielectric::Dielectric10_4, file::File, hittable::Hittables,
+    lambertian::Lambertian, metal::Metal, random, sphere::Sphere, vec::Vec3, write_color,
 };
 
 fn main() {
+    let mut rng = thread_rng();
+
     // image
     let aspect_ratio = 16.0 / 9.0;
     let width = 400;
@@ -19,15 +21,9 @@ fn main() {
     let camera = Camera::new();
 
     // world
-    let ground = Lambertian {
-        albedo: Vec3::new(0.8, 0.8, 0.0),
-    };
-    let center = Lambertian {
-        albedo: Vec3::new(0.1, 0.2, 0.5),
-    };
-    let left = Dielectric {
-        index_of_refraction: 1.5,
-    };
+    let ground = Lambertian::new(Vec3::new(0.8, 0.8, 0.0));
+    let center = Lambertian::new(Vec3::new(0.1, 0.2, 0.5));
+    let left = Dielectric10_4::new(1.5);
     let right = Metal::new(Vec3::new(0.8, 0.6, 0.2), 0.0);
 
     let mut world: Hittables = Hittables {
@@ -71,17 +67,10 @@ fn main() {
         for w in 0..width {
             let mut pixel_color = Vec3::new(0.0, 0.0, 0.0);
             for _ in 0..samples_per_pixel {
-                let u: f64 = (w as f64 + random()) / (width as f64 - 1.0);
-                let v: f64 = (h as f64 + random()) / (height as f64 - 1.0);
+                let u: f64 = (w as f64 + random(&mut rng)) / (width as f64 - 1.0);
+                let v: f64 = (h as f64 + random(&mut rng)) / (height as f64 - 1.0);
                 let ray = camera.ray(u, v);
-                let world_hit_t_min = 0.001;
-                pixel_color = pixel_color
-                    + ray.diffused_world_color(
-                        &world,
-                        max_depth,
-                        world_hit_t_min,
-                        random_unit_vector,
-                    );
+                pixel_color = pixel_color + ray.color_09_4(&world, max_depth, &mut rng);
             }
             write_color(&output, pixel_color, samples_per_pixel, false);
         }
