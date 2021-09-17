@@ -1,6 +1,6 @@
 extern crate raylib;
 
-use raylib::{file::File, ray::Ray, vec::Vec3, write_color};
+use raylib::{file::File, ray::Ray, vec::Vec3, write_color_03_3};
 
 fn main() {
     // image
@@ -29,13 +29,11 @@ fn main() {
             let u: f64 = w as f64 / (width as f64 - 1.0);
             let v: f64 = h as f64 / (height as f64 - 1.0);
 
-            let direction = lower_left_corner + horizontal * u + vertical * v - origin;
-
             let ray = Ray {
                 origin: origin,
-                direction: direction,
+                direction: lower_left_corner + horizontal * u + vertical * v - origin,
             };
-            write_color(&output, ray.color(), 0, false);
+            write_color_03_3(&output, ray.color());
         }
     }
     println!("DONE")
