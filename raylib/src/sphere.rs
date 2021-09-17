@@ -41,13 +41,12 @@ impl Hittable for Sphere {
         }
 
         let point = ray.at(root);
-        let outward_normal = (point - self.center) / self.radius;
-        let front_face = ray.direction.dot(&outward_normal) < 0.0;
 
-        let normal: Vec3;
-        if front_face {
-            normal = outward_normal;
-        } else {
+        let outward_normal = (point - self.center) / self.radius;
+        let mut normal = outward_normal;
+
+        let front_face = ray.direction.dot(&outward_normal) < 0.0;
+        if !front_face {
             normal = -outward_normal;
         }
 
