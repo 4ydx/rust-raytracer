@@ -45,6 +45,15 @@ impl Ray {
         self.color_04_2()
     }
 
+    pub fn color_06_2(&self) -> Vec3 {
+        let t = self.hit_sphere_06_2(Vec3::new(0.0, 0.0, -1.0), 0.5);
+        if t > 0.0 {
+            let normal = (self.at(t) - Vec3::new(0.0, 0.0, -1.0)).unit();
+            return Vec3::new(normal.x + 1.0, normal.y + 1.0, normal.z + 1.0) * 0.5;
+        }
+        self.color_04_2()
+    }
+
     pub fn diffused_world_color_in_hemisphere(
         &self,
         world: &Hittables,
@@ -128,6 +137,19 @@ impl Ray {
     }
 
     pub fn hit_sphere_06_1(&self, center: Vec3, radius: f64) -> f64 {
+        let oc = self.origin - center;
+        let a = self.direction.dot(&self.direction);
+        let b = 2.0 * self.direction.dot(&oc);
+        let c = oc.dot(&oc) - radius * radius;
+        let discriminant = b * b - 4.0 * a * c;
+
+        if discriminant > 0.0 {
+            return -1.0;
+        }
+        (-b - discriminant.sqrt()) / (2.0 * a)
+    }
+
+    pub fn hit_sphere_06_2(&self, center: Vec3, radius: f64) -> f64 {
         let oc = self.origin - center;
 
         // vector dotted with itself is equal to squared length of the vector
