@@ -149,30 +149,27 @@ impl Ray {
         (-b - discriminant.sqrt()) / (2.0 * a)
     }
 
+    // See hit_sphere_06_1 for differences
     pub fn hit_sphere_06_2(&self, center: Vec3, radius: f64) -> f64 {
         let oc = self.origin - center;
 
         // vector dotted with itself is equal to squared length of the vector
-        // let a = self.direction.dot(&self.direction); // a' above
-        let a = self.direction.length_squared(); // a' above
+        let a = self.direction.length_squared();
 
         // using b' = 2*h simplification
-        // let b = 2.0 * self.direction.dot(&oc); // b' above
-        let h = self.direction.dot(&oc); // h above
+        let h = self.direction.dot(&oc);
 
         // vector dotted with itself is equal to squared length of the vector
-        // let c = oc.dot(&oc) - radius * radius;
         let c = oc.length_squared() - radius * radius;
 
-        // let discriminant = b * b - 4.0 * a * c;
+        // substituting b = 2 * h
         let discriminant = h * h - a * c;
 
         if discriminant < 0.0 {
             return -1.0;
         }
 
-        // using b' = 2*h simplification
-        // return (-b - discriminant.sqrt()) / (2.0 * a);
+        // substituting b = 2 * h
         return (-h - discriminant.sqrt()) / a;
     }
 }
