@@ -44,7 +44,7 @@ fn main() {
                 let ray = camera.ray(u, v);
                 pixel_color = pixel_color + ray.color_08_5(&world, max_depth, &mut rng);
             }
-            write_color(&output, pixel_color, samples_per_pixel, false);
+            write_color(&output, pixel_color, samples_per_pixel, true);
         }
     }
     println!("DONE")

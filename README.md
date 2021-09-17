@@ -8,4 +8,5 @@ https://raytracing.github.io/books/RayTracingInOneWeekend.html
 EG
 
 cd raylib; cargo build; cd ..
-cd 3.3; cargo build
+
+cd 03.3; cargo build

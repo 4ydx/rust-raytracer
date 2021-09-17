@@ -45,7 +45,7 @@ impl Camera {
         build_camera(viewport_width, viewport_height)
     }
 
-    pub fn with_vfov(vfov: f64, aspect_ratio: f64) -> Camera {
+    pub fn new11_1(vfov: f64, aspect_ratio: f64) -> Camera {
         let theta = degrees_to_radians(vfov);
         let h = (theta / 2.0).tan();
         let viewport_height = 2.0 * h;
@@ -54,7 +54,7 @@ impl Camera {
         build_camera(viewport_width, viewport_height)
     }
 
-    pub fn from(
+    pub fn new11_2(
         look_from: Vec3,
         look_at: Vec3,
         view_up: Vec3,

@@ -2,9 +2,9 @@ extern crate raylib;
 
 use rand::prelude::*;
 use raylib::{
-    camera::Camera, dielectric::Dielectric, file::File, hittable::Hittables,
-    lambertian::Lambertian, metal::Metal, random, random_between, random_unit_vector,
-    sphere::Sphere, vec::Vec3, write_color,
+    camera::Camera, dielectric::Dielectric10_4, file::File, hittable::Hittables,
+    lambertian::Lambertian, metal::Metal, random, random_between, sphere::Sphere, vec::Vec3,
+    write_color,
 };
 
 fn random_scene(rng: &mut rand::rngs::ThreadRng) -> Hittables {
@@ -44,7 +44,7 @@ fn random_scene(rng: &mut rand::rngs::ThreadRng) -> Hittables {
                         .list
                         .push(Box::new(Sphere::new(center, 0.2, Some(Box::new(material)))));
                 } else {
-                    let material = Dielectric::new(1.5);
+                    let material = Dielectric10_4::new(1.5);
                     world
                         .list
                         .push(Box::new(Sphere::new(center, 0.2, Some(Box::new(material)))));
@@ -53,7 +53,7 @@ fn random_scene(rng: &mut rand::rngs::ThreadRng) -> Hittables {
         }
     }
 
-    let m1 = Dielectric::new(1.5);
+    let m1 = Dielectric10_4::new(1.5);
     world.list.push(Box::new(Sphere::new(
         Vec3::new(0.0, 1.0, 0.0),
         1.0,
@@ -115,17 +115,9 @@ fn main() {
                 let u: f64 = (w as f64 + random(&mut rng)) / (width as f64 - 1.0);
                 let v: f64 = (h as f64 + random(&mut rng)) / (height as f64 - 1.0);
                 let ray = camera.ray_12_2(u, v, &mut rng);
-                let world_hit_t_min = 0.001;
-                pixel_color = pixel_color
-                    + ray.diffused_world_color(
-                        &world,
-                        max_depth,
-                        world_hit_t_min,
-                        random_unit_vector,
-                        &mut rng,
-                    );
+                pixel_color = pixel_color + ray.color_09_4(&world, max_depth, &mut rng);
             }
-            write_color(&output, pixel_color, samples_per_pixel, false);
+            write_color(&output, pixel_color, samples_per_pixel, true);
         }
     }
     println!("DONE")
