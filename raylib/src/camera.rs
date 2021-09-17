@@ -22,9 +22,9 @@ fn build_camera(viewport_width: f64, viewport_height: f64) -> Camera {
     let vertical = Vec3::new(0.0, viewport_height, 0.0);
 
     Camera {
-        origin: origin,
-        horizontal: horizontal,
-        vertical: vertical,
+        origin,
+        horizontal,
+        vertical,
         lower_left_corner: origin
             - horizontal / 2.0
             - vertical / 2.0
@@ -75,9 +75,9 @@ impl Camera {
         let vertical = v * viewport_height;
 
         Camera {
-            origin: origin,
-            horizontal: horizontal,
-            vertical: vertical,
+            origin,
+            horizontal,
+            vertical,
             lower_left_corner: origin - (horizontal / 2.0) - (vertical / 2.0) - w,
             w: Vec3::default(),
             u: Vec3::default(),
@@ -110,13 +110,13 @@ impl Camera {
         let lower_left_corner = origin - horizontal / 2.0 - vertical / 2.0 - w * focus_dist;
 
         Camera {
-            origin: origin,
-            horizontal: horizontal,
-            vertical: vertical,
-            lower_left_corner: lower_left_corner,
-            w: w,
-            u: u,
-            v: v,
+            origin,
+            horizontal,
+            vertical,
+            lower_left_corner,
+            w,
+            u,
+            v,
             lens_radius: aperture / 2.0,
         }
     }
