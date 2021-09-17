@@ -23,11 +23,11 @@ impl<'world> Hit<'world> {
         material: Option<&'world dyn Material>,
     ) -> Hit {
         Hit {
-            t: t,
-            point: point,
-            normal: normal,
-            front_face: front_face,
-            material: material,
+            t,
+            point,
+            normal,
+            front_face,
+            material,
         }
     }
 }
