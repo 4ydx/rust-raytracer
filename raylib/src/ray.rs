@@ -180,7 +180,7 @@ impl Ray {
         let c = oc.dot(&oc) - radius * radius;
         let discriminant = b * b - 4.0 * a * c;
 
-        if discriminant > 0.0 {
+        if discriminant < 0.0 {
             return -1.0;
         }
         (-b - discriminant.sqrt()) / (2.0 * a)
