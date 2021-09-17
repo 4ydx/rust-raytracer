@@ -69,6 +69,14 @@ pub fn random_in_unit_sphere(rng: &mut rand::rngs::ThreadRng) -> vec::Vec3 {
     }
 }
 
+pub fn write_color_03_3(output: &file::File, color: vec::Vec3) {
+    output.write(vec::Vec3::new(
+        255.999 * color.x,
+        255.999 * color.y,
+        255.999 * color.z,
+    ));
+}
+
 pub fn write_color(
     output: &file::File,
     color: vec::Vec3,

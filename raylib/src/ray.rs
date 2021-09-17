@@ -20,6 +20,17 @@ impl Ray {
         self.origin + self.direction * t
     }
 
+    pub fn color(&self) -> Vec3 {
+        let dir = self.direction.unit();
+        let t = 0.5 * (dir.y + 1.0);
+
+        // linear interpolation (lerp)
+        // blendedValue = (1−t) ⋅ startValue + t ⋅ endValue
+        let white = Vec3::new(1.0, 1.0, 1.0);
+        let blue = Vec3::new(0.5, 0.7, 1.0);
+        white * (1.0 - t) + blue * t
+    }
+
     pub fn diffused_world_color_in_hemisphere(
         &self,
         world: &Hittables,
@@ -90,17 +101,6 @@ impl Ray {
             Some(point) => (point.normal + Vec3::new(1.0, 1.0, 1.0)) * 0.5,
             None => self.color(),
         }
-    }
-
-    pub fn color(&self) -> Vec3 {
-        let dir = self.direction.unit();
-        let t = 0.5 * (dir.y + 1.0);
-        let white = Vec3::new(1.0, 1.0, 1.0);
-        let blue = Vec3::new(0.5, 0.7, 1.0);
-
-        // linear interpolation (lerp)
-        // blendedValue = (1−t) ⋅ startValue + t ⋅ endValue
-        white * (1.0 - t) + blue * t
     }
 
     // hit_sphere calculates whether or not a ray from the camera origin
